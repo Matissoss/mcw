@@ -20,13 +20,13 @@ impl std::fmt::Display for Word{
 async fn main() {
     let args: Vec<String> = std::env::args().collect();
     if args.len() == 1{
-        println!("Not enough arguments: use --help or -h")
+        println!("Not enough arguments: use --help")
     }
-    else if args.len() == 2 && args[1] == "--help" || args[1] == "-h" {
+    else if args.len() == 2 && args[1] == "--help" {
         println!("
         mcw -> most common word 
 
-        --help OR -h -> help
+        --help
         
         -formula-
         *executable **file.format ***number
