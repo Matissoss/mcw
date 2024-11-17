@@ -2,10 +2,10 @@
 ---
 |Operating System|Compatible|
 |----------------|----------|
-|Windows         | No*      |
+|Windows         | idk*      |
 |MacOS           |Not Tested|
 |Linux           |Yes       |
-* Program uses `std::env::home_dir()` which can lead to unexpected behaviour of file
+* Program uses `std::env::home_dir()` which can lead to unexpected behaviour of file according to rust warnings
 ---
 In version `1.1.0` presets were added to allow for customized filters.
 
