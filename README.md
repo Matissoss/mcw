@@ -4,10 +4,10 @@ mcw is CLI program that does what it says - reads file and prints out most commo
 
 ---
 # Customize Behaviour of program
-read (PRESETS.md)[PRESETS.md]
+read [PRESETS.md](PRESETS.md)
 
 # To do 
-read (TODO.md)[TODO.md]
+read [TODO.md](TODO.md)
 
 # Building Project from Source
 
