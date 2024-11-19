@@ -1,10 +1,11 @@
-# To do / Roadmap
+|Task/Feature|Status|
+|------------|------|
+|Basic IO operations|Done|
+|Presets support|Done|
+|Multi File support|Done|
+|Adding range to second/third argument|Next Update|
+|Advanced Presets|Next Update|
+|`mcw` rust crate/lib|Todo|
 
-- Better `std::env::home_dir()` handling,
-- Better argument handling - allowance for multiple files,
-- More customization options through Presets,
-- Builds for more Architectures/Operating Systems
 
-# Done
-
-- Custom presets support (atleast for Linux)
+Status - Todo/Next Update/Done

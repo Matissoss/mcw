@@ -1,10 +1,10 @@
 use std::{collections::HashMap, fs};
-use tokio;
 use colored::Colorize;
 use serde::{Deserialize, Serialize};
 use toml;
+use std::sync::Arc;
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Clone)]
 struct Configuration{
     ignored_chars : Vec<char>
 }
@@ -26,27 +26,29 @@ impl std::fmt::Display for Word{
 #[tokio::main]
 async fn main() {
     let args: Vec<String> = std::env::args().collect();
-
     let mut file_directory = std::env::home_dir().unwrap();
-    let mut config : Option<Configuration> = Some(Configuration{
-        ignored_chars : vec![',', '.', '?', '!']
-    });
-    if args.len() >= 4{
+    let config : Arc<Configuration> =if args.len() >= 4{
         file_directory.push(format!("/.config/mcw/{}.toml", args[3])); 
         let file_contents = match fs::read_to_string(file_directory){
             Ok(v) => v,
             Err(_) => {
-                "ignored_chars = [',', '.', '?', '!']".to_string()
+                "ignored_chars = [',', '.', '?', '!', ':', ';']".to_string()
             }
         };
 
-        config = match toml::from_str(&file_contents){
+        let final_config = match toml::from_str(&file_contents){
             Ok(v) => v,
             Err(_) => {
-                Some(Configuration{ignored_chars : vec![',', '.', '?', '!']})
+                Configuration{ignored_chars : vec![',', '.', '?', '!', ':', ';']}.into()
             }
         };
+        Arc::new(final_config)
     }
+    else
+    {   
+        Arc::new(Configuration{ignored_chars : vec![',', '.', '?', '!', ':', ';']})
+    };
+
 
 
     if args.len() == 1{
@@ -73,17 +75,25 @@ async fn main() {
         and a word needs to be repeated 10 or more times to be mentioned
         ");
     } else if args.len() >= 2 {
-        let file_name = args[1].clone();
+        let file_names : Arc<Vec<String>> = Arc::new(args[1].clone()
+            .split_whitespace()
+            .map(|f| f.to_string())
+            .collect());
 
-        let file_contents = match std::fs::read_to_string(file_name) {
-            Ok(v) => v,
-            Err(e) => {
-                println!("{}", e);
-                std::process::abort();
-            }
-        };
+        let mut handles = vec![];
+        for i in 0..file_names.len(){
+            let shared_file_name = Arc::new(file_names[i].clone());
+            let shared_conf = Arc::clone(&config);
+            handles.push(tokio::spawn(async move{
+                process_text(&shared_file_name, &shared_conf)
+                    .await
+            }));
+        }
 
-        let array = process_text(&file_contents, &config.unwrap()).await;
+        let mut threads : Vec<Result<(HashMap<String, u64>,), tokio::task::JoinError>> = vec![];
+        for handle in handles{
+            threads.push(tokio::try_join!(handle));
+        }
         let mut words : Vec<Word> = vec![];
         let minimum_word : u64 = if args.len() >= 3{
             args[2].parse().expect("error parsing additional number")
@@ -91,15 +101,35 @@ async fn main() {
         else{
             1
         };
-        for key in array.keys() {
-            let word = array.get(key).unwrap();
-            if *word >= minimum_word{
-                words.push(Word{
-                    value: key.to_string(),
-                    amount : *word
-                });
+
+        // Remove `Result<> and JoinError` - tuple remained
+        let processed_vec : Vec<(HashMap<String, u64>,)> = threads
+        .into_iter()
+        .filter_map(|result| match result {
+            Ok(map) => Some(map),
+            Err(e) => {
+                eprintln!("{:?}", e);
+                None
             }
+        })
+        .collect();
+        let mut final_hashmap : Vec<HashMap<String, u64>> = vec![HashMap::new(); processed_vec.len()];
+        for index in 0..processed_vec.len(){
+            (final_hashmap[index],) = processed_vec[index].clone();
         }
+
+        let merged_hashmap = merge_hashmap_vector(final_hashmap).await;
+
+        for key in merged_hashmap.keys(){
+            let word = merged_hashmap.get(key).unwrap();
+                if *word >= minimum_word{
+                    words.push(Word{
+                        value: key.to_string(),
+                        amount: *word
+                    });
+                }
+        } 
+
         words.sort_by(|a,b| a.amount.cmp(&b.amount));
         for w in words{
             println!("{}", w);
@@ -109,7 +139,11 @@ async fn main() {
     }
 }
 
-async fn process_text(file_contents: &str, config : &Configuration) -> HashMap<String, u64> {
+async fn process_text(file_path: &str, config : &Configuration) -> HashMap<String, u64> {
+    let file_contents = match fs::read_to_string(file_path){
+        Ok(v) => v.to_string(),
+        Err(_) => "".to_string()
+    };
     let words_as_vec: Vec<String> = file_contents
         .split_whitespace()
         .map(|s| s.to_string())
@@ -148,4 +182,16 @@ async fn process_text(file_contents: &str, config : &Configuration) -> HashMap<S
         }
     }
     words
+}
+
+async fn merge_hashmap_vector(vector : Vec<HashMap<String, u64>>) -> HashMap<String, u64>{
+    let mut returned_hashmap : HashMap<String, u64> = HashMap::new();
+    for hshm in vector{
+        for key in hshm.keys(){
+            let cont1 = hshm.get(key).unwrap();
+            returned_hashmap
+            .insert(key.to_string(), cont1 + 1);
+        }
+    }
+    returned_hashmap
 }

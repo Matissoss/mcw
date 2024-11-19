@@ -1,28 +1,48 @@
-# Presets and how to use them
----
-|Operating System|Compatible|
-|----------------|----------|
-|Windows         | idk*      |
-|MacOS           |Not Tested|
-|Linux           |Yes       |
-* Program uses `std::env::home_dir()` which can lead to unexpected behaviour of file according to rust warnings
----
-In version `1.1.0` presets were added to allow for customized filters.
+# What are presets?
 
-To use them, pass them as third/fourth argument
--Example Formula-
-`./exec path_to_file 10 PRESET`
+Presets are option to customize behaviour of program. 
+Presets were added in v1.1.0. 
+Currently only preset parameter are `ignored_chars`, which as name suggests - 
+contains characters that CLI will ignore in counting words.
 
-`PRESET` is path to custom preset located in `~/.config/mcw/PRESET.toml`
+-Example-:
+text = "Litwo Ojczyzno moja!"[^1]
+ignored_chars = ['!', ',', [...]]
+Output = "litwo", "ojczyzno", "moja"
+-EOE[^0]-
 
-Every `PRESET` is stored in `.toml` file, ***DON'T PROVIDE EXTENSION AS PROGRAM AUTOMATICALLY ADDS .toml EXTENSION***
+-Example 2-:
+text = "Ślachetne zdrowie, Nikt się nie dowie, Jako smakujesz, Aż się zepsujesz."[^2]
+ignored_chars = ['!', ',', '.', '?', [...]]
+Output =
+-EOE-
 
-# Creating Custom Preset 
+# How to make one?
 
-As mentioned before, presets are located `~/.config/mcw/`. 
-To create file you must provide ignored_chars of type `Vec<char>`
+|Operating System|Compatible?|
+|----------------|-----------|
+|Windows|not tested* |
+|MacOS|Should Work|
+|Linux|Yes|
 
--Default Config-
+Presets are located in: `~/.config/mcw` or `/home_path/mcw/`
+To create preset, create `~/.config/mcw` directory, then add your preset in `.toml` format.
+
+Only field currently you'll need to write is: `ignored_chars` 
+which takes Vector of characters as input
+
+-Example-
+```toml
+ignored_chars = [',', '?', '.']
 ```
-ignored_chars = [',', '.', '?', '!']
-```
+-EOE-
+
+To use preset, pass it as third/fourth argument
+-Example-
+`./exec 'file1.txt file2.txt' 1 YOUR_PRESET_WITHOUT_TOML_EXTENSION`
+-EOE-
+
+---
+[^0]: EOE - End of Example
+[^1]: Adam Mickiewicz, Pan Tadeusz
+[^2]: Jan Kochanowski, "Na Zdrowie"
