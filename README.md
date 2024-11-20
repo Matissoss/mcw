@@ -28,6 +28,8 @@ First/Second Argument: files to read -- Example: `file1.txt` (if you want to pas
 
 Second/Third Argument: range that word should repeat in beetwen to be mentioned -- Example: `0.10` will return words that repeat from `0` to `10` times
 
+Second/Third Argument: number that word should repeat to be mentioned -- Example: `1`
+
 Third/Fourth Argument: preset (read [PRESETS.md](PRESETS.md)) -- Example: `text_preset`
 
 -Example Formulas-
@@ -35,6 +37,9 @@ Third/Fourth Argument: preset (read [PRESETS.md](PRESETS.md)) -- Example: `text_
 `./path_to_exec 'file1.txt file2.txt' 0.10 test_preset`
 `./path_to_exec pan-tadeusz.txt 0.100 polish_text_preset`
 `./path_to_exec main.c 0.10 c_preset`
+`./path_to_exec 'file1.txt file2.txt' 10 test_preset`
+`./path_to_exec pan-tadeusz.txt 100 polish_text_preset`
+`./path_to_exec main.c 10 c_preset`
 
 -EOEF-
 
