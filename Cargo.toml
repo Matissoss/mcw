@@ -5,6 +5,7 @@ edition = "2021"
 license = "MIT"
 author = ["MateusDev <matissossGameDev@proton.me>"]
 description = "mcw - most common word"
+readme = "README.crates.md"
 
 [lib]
 name = "mcw"
