@@ -96,22 +96,23 @@ pub fn get_words(text: &str, is_file: bool) -> Result<Vec<Word>, Box<dyn std::er
     }
 
     Ok(word_array)
+
 }
 
 #[cfg(not(feature = "cli"))]
 #[cfg(feature = "async")]
-async fn get_words(text: &str, is_file: bool) -> Result<Vec<Word>, Box<dyn std::error::Error>>{
+async fn get_words(text: &str, is_file: bool) -> Result<Vec<Word>, Box<dyn std::error::Error>>{    
     let input_text : Vec<String> = if is_file == false{
         text.to_string().split_whitespace().map(|s| s.to_string()).collect()
     }
     else{
-        tokio::fs::read_to_string(text).await?.split_whitespace().map(|s| s.to_string()).collect()
+    tokio::fs::read_to_string(text).await?.split_whitespace().map(|s| s.to_string()).collect()
     };
     let mut processed_text_as_chars : Vec<char> = vec![];
     for string in input_text{
         let input_text_as_chars : Vec<char> = string.chars().collect();
         for c in &input_text_as_chars{
-            if *c != '?' && *c != '!' && *c != '.' && *c != ',' && *c != ':' && *c != ';'{
+            if *c != '?' && *c != '!' && *c != '.' && *c != ',' && *c != ';' && *c != ':'{
                 processed_text_as_chars.push(*c);
             }
             else{

@@ -114,18 +114,18 @@ async fn main() {
         --help
         
         -formula-
-        *executable **file.format ***number
+        *executable **file.format ***range
         ---------
         *executable -> execute program
 
         **file.format -> file that program should read 
 
-        ***number -> how much times does word needs to be repeated to be mentioned
+        ***range -> range beetwen which word needs to exist to be mentioned
         
         -Example-
-        ./mcw text.txt 10
+        ./mcw text.txt 0.10
         means that program will read from file named `text.txt` 
-        and a word needs to be repeated 10 or more times to be mentioned
+        and a word needs to be repeated atleast 1 time to 10 times
         ");
     } else if args.len() >= 2 {
         let file_names : Arc<Vec<String>> = Arc::new(args[1].clone()
