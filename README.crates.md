@@ -4,7 +4,9 @@
 ---
 mcw is rust crate that stands for: "most common word"
 mcw does what it says -> returns most common words  
+
 # Using the Crate
+
 ```rust 
 use mcw::*;
 fn main() -> Result<(), Box<dyn std::error::Error>>{
@@ -15,6 +17,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>>{
       Ok(())
 }
 ```
+
 ***Additional Note*** : argument of type bool contains whether the argument of type String is
 file directory or not. Error only may occur if bool is true.
  
