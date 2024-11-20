@@ -6,15 +6,23 @@ Currently only preset parameter are `ignored_chars`, which as name suggests -
 contains characters that CLI will ignore in counting words.
 
 -Example-:
+
 text = "Litwo Ojczyzno moja!"[^1]
+
 ignored_chars = ['!', ',', [...]]
+
 Output = "litwo", "ojczyzno", "moja"
+
 -EOE[^0]-
 
 -Example 2-:
+
 text = "Ślachetne zdrowie, Nikt się nie dowie, Jako smakujesz, Aż się zepsujesz."[^2]
+
 ignored_chars = ['!', ',', '.', '?', [...]]
-Output =
+
+Output = "ślachetne", "zdrowie", "nikt", "się", "nie", "dowie", "jako", "smakujesz", "aż", "się", "zepsujesz"
+
 -EOE-
 
 # How to make one?
@@ -24,6 +32,8 @@ Output =
 |Windows|not tested* |
 |MacOS|Should Work|
 |Linux|Yes|
+
+`*` -> rust_analyzer says that `std::env::home_dir()` may lead to unexpected behaviour on Windows (idk if that's true)
 
 Presets are located in: `~/.config/mcw` or `/home_path/mcw/`
 To create preset, create `~/.config/mcw` directory, then add your preset in `.toml` format.

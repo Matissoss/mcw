@@ -23,13 +23,19 @@ mcw is CLI app that does what it says - takes files as input and outputs most co
 ## Using Program
 
 Zero/First Argument: executable -- Example: `./path_to_exec`
+
 First/Second Argument: files to read -- Example: `file1.txt` (if you want to pass more files write them `'HERE'`, example: `'file1.txt file2.txt file3.txt'`),
-Second/Third Argument: number that word should repeat to be mentioned -- Example: `1`
+
+Second/Third Argument: range that word should repeat in beetwen to be mentioned -- Example: `0.10` will return words that repeat from `0` to `10` times
+
 Third/Fourth Argument: preset (read [PRESETS.md](PRESETS.md)) -- Example: `text_preset`
+
 -Example Formulas-
-`./path_to_exec 'file1.txt file2.txt' 10 test_preset`
-`./path_to_exec pan-tadeusz.txt 100 polish_text_preset`
-`./path_to_exec main.c 10 c_preset`
+
+`./path_to_exec 'file1.txt file2.txt' 0.10 test_preset`
+`./path_to_exec pan-tadeusz.txt 0.100 polish_text_preset`
+`./path_to_exec main.c 0.10 c_preset`
+
 -EOEF-
 
 ## Building Project from source

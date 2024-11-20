@@ -1,9 +1,15 @@
 use std::{collections::HashMap, fs};
+#[cfg(feature = "cli")]
 use colored::Colorize;
+#[cfg(feature = "cli")]
 use serde::{Deserialize, Serialize};
+#[cfg(feature = "cli")]
 use toml;
+
+#[cfg(feature = "cli")]
 use std::sync::Arc;
 
+#[cfg(feature = "cli")]
 #[derive(Deserialize, Serialize, Clone)]
 struct Configuration{
     ignored_chars : Vec<char>
@@ -15,14 +21,63 @@ struct Word{
     amount : u64
 }
 
+#[derive(Clone, Copy)]
+struct Range{
+    min: u64,
+    max: u64
+}
+
+impl Range{
+    fn in_range(range: Range, value: u64) -> bool{
+        return value > range.min && value <= range.max;
+    }
+}
+
+impl From<String> for Range{
+    fn from(value: String) -> Self {
+        let mut number_1_string : Vec<char> = vec![];
+        let mut number_2_string : Vec<char> = vec![];
+        let mut is_num1 : bool = true; // true -> num1 false -> num2
+        for c in value.chars().collect::<Vec<char>>(){
+               if is_num1 && c != '.'{
+                   number_1_string.push(c);
+               } 
+               else if !is_num1 && c != '.'{
+                   number_2_string.push(c);
+               }
+               else{
+                   is_num1 = false;
+               }
+        }
+        let number_1 = match String::from_iter(number_1_string.iter()).trim().parse(){
+            Ok(v) => v,
+            Err(e) =>{
+                eprintln!("{}", e);
+                0
+            }
+        };
+        let number_2 = match String::from_iter(number_2_string.iter()).trim().parse(){
+            Ok(v) => v,
+            Err(e) => {
+                eprintln!("{}", e);
+                10
+            }
+        };
+        Range{min: number_1, max: number_2}
+    }
+}
+
+
+#[cfg(feature = "cli")]
 impl std::fmt::Display for Word{
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        writeln!(f, "===>\"{}\"<=== \n was repeated {} times", 
+        writeln!(f, "===>\"{}\"<=== \n was repeated {} times",
             self.value.bold().yellow(), 
             self.amount.to_string().bold().italic().cyan())
     }
 }
 
+#[cfg(feature = "cli")]
 #[tokio::main]
 async fn main() {
     let args: Vec<String> = std::env::args().collect();
@@ -48,8 +103,6 @@ async fn main() {
     {   
         Arc::new(Configuration{ignored_chars : vec![',', '.', '?', '!', ':', ';']})
     };
-
-
 
     if args.len() == 1{
         println!("Not enough arguments: use --help")
@@ -95,13 +148,7 @@ async fn main() {
             threads.push(tokio::try_join!(handle));
         }
         let mut words : Vec<Word> = vec![];
-        let minimum_word : u64 = if args.len() >= 3{
-            args[2].parse().expect("error parsing additional number")
-        }
-        else{
-            1
-        };
-
+        let word_range : Range = Range::from(args[2].clone());
         // Remove `Result<> and JoinError` - tuple remained
         let processed_vec : Vec<(HashMap<String, u64>,)> = threads
         .into_iter()
@@ -122,7 +169,7 @@ async fn main() {
 
         for key in merged_hashmap.keys(){
             let word = merged_hashmap.get(key).unwrap();
-                if *word >= minimum_word{
+                if Range::in_range(word_range, *word){
                     words.push(Word{
                         value: key.to_string(),
                         amount: *word
@@ -139,6 +186,7 @@ async fn main() {
     }
 }
 
+#[cfg(feature = "cli")]
 async fn process_text(file_path: &str, config : &Configuration) -> HashMap<String, u64> {
     let file_contents = match fs::read_to_string(file_path){
         Ok(v) => v.to_string(),
@@ -184,6 +232,7 @@ async fn process_text(file_path: &str, config : &Configuration) -> HashMap<Strin
     words
 }
 
+#[cfg(feature = "cli")]
 async fn merge_hashmap_vector(vector : Vec<HashMap<String, u64>>) -> HashMap<String, u64>{
     let mut returned_hashmap : HashMap<String, u64> = HashMap::new();
     for hshm in vector{
@@ -194,4 +243,10 @@ async fn merge_hashmap_vector(vector : Vec<HashMap<String, u64>>) -> HashMap<Str
         }
     }
     returned_hashmap
+}
+
+#[cfg(not(feature = "cli"))]
+#[cfg(not(feature = "async"))]
+fn main(){
+    return;
 }
