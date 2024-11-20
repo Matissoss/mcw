@@ -35,10 +35,15 @@ Third/Fourth Argument: preset (read [PRESETS.md](PRESETS.md)) -- Example: `text_
 -Example Formulas-
 
 `./path_to_exec 'file1.txt file2.txt' 0.10 test_preset`
+
 `./path_to_exec pan-tadeusz.txt 0.100 polish_text_preset`
+
 `./path_to_exec main.c 0.10 c_preset`
+
 `./path_to_exec 'file1.txt file2.txt' 10 test_preset`
+
 `./path_to_exec pan-tadeusz.txt 100 polish_text_preset`
+
 `./path_to_exec main.c 10 c_preset`
 
 -EOEF-
