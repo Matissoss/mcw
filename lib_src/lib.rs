@@ -2,14 +2,13 @@
 //! mcw does what it says -> returns most common words 
 //! 
 //! # Using the Crate
-//! ```rust 
+//! ```rust,ignore
 //! use mcw::*;
-//! fn main() -> Result<(), Box<dyn std::error::Error>>{
-//!      let words : Vec<Word> = get_words("These are words. Lorem Ipsum.", false)?;
+//! fn main(){
+//!      let words : Vec<Word> = get_words("These are words. Lorem Ipsum.", false).expect("error");
 //!      for word in words{
 //!          println!("{}", word);
 //!      }
-//!      Ok(())
 //! }
 //! ```
 //! ***Additional Note*** : argument of type bool contains whether the argument of type String is
@@ -20,8 +19,9 @@
 //! `std::fs`
 //!
 //! **/Cargo.toml**
-//! ```
+//! ```ignore
 //! [package]
+//!
 //! name = "your_package"
 //! version = "0.1.0"
 //! edition = "2021"
@@ -29,18 +29,17 @@
 //! mcw = {version = "1.3.0", features = ["async"]}
 //! ```
 //! **/src/main.rs**
-//! ```rust 
-//! #[tokio::main]
-//! async fn main() -> Result<(), Box<dyn std::error::Error>>{
+//! ```rust,ignore
+//!  #[tokio::main]
+//! async fn main(){
 //!      let words : Vec<Word> = get_words("These are words. Lorem Ipsum. Async Version of
-//!      function", false).await?;
+//!      function", false).await.expect("error");
 //!
 //!      for word in words{
 //!         println!("{}", word);
 //!      }
-//!
-//!      Ok(())
 //! }
+//! 
 //! ```
 //! ---
 
@@ -65,28 +64,34 @@ pub fn get_words(text: &str, is_file: bool) -> Result<Vec<Word>, Box<dyn std::er
     else{
         std::fs::read_to_string(text)?.split_whitespace().map(|s| s.to_string()).collect()
     };
-    let mut processed_text_as_chars : Vec<char> = vec![];
+    let mut processed_text_as_chars : Vec<Vec<char>> = vec![];
     for string in input_text{
-        let input_text_as_chars : Vec<char> = string.chars().collect();
-        for c in &input_text_as_chars{
+        let mut chars_in : Vec<char> = vec![];
+        for c in &string.chars().collect::<Vec<char>>(){
             if *c != '?' && *c != '!' && *c != '.' && *c != ',' && *c != ';' && *c != ':'{
-                processed_text_as_chars.push(*c);
+                chars_in.push(*c);
             }
             else{
                 continue;
             }
         }
+        processed_text_as_chars.push(chars_in);
     }
-    let processed_text = String::from_iter(processed_text_as_chars.iter()).to_lowercase();
+    let mut processed_text : Vec<String> = vec![];
+    for chrs in processed_text_as_chars{
+        processed_text.push(String::from_iter(chrs.iter()));
+    }
     let mut word_array : Vec<Word> = vec![];
     let mut hashmap_with_words : std::collections::HashMap<String, u64> = std::collections::HashMap::new();
-    for string in processed_text.split_whitespace().map(|s| s.to_string()).collect::<Vec<String>>(){
-        if hashmap_with_words.contains_key(&string){
-            let value = hashmap_with_words.get(&string).unwrap();
-            hashmap_with_words.insert(string, value +1);
-        }
-        else{
-            hashmap_with_words.insert(string, 1);
+    for text in processed_text{
+        for string in text.split_whitespace().map(|s| s.to_string()).collect::<Vec<String>>(){
+            if hashmap_with_words.contains_key(&string){
+                let value = hashmap_with_words.get(&string).unwrap();
+                hashmap_with_words.insert(string.to_lowercase(), value +1);
+            }
+            else{
+                hashmap_with_words.insert(string.to_lowercase(), 1);
+            }
         }
     }
 
@@ -96,7 +101,6 @@ pub fn get_words(text: &str, is_file: bool) -> Result<Vec<Word>, Box<dyn std::er
     }
 
     Ok(word_array)
-
 }
 
 #[cfg(not(feature = "cli"))]

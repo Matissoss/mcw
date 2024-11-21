@@ -1,6 +1,6 @@
 [package]
 name = "mcw"
-version = "1.3.3"
+version = "1.3.4"
 edition = "2021"
 license = "MIT"
 author = ["MateusDev <matissossGameDev@proton.me>"]
