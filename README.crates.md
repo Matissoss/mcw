@@ -1,7 +1,9 @@
 <div align=center>
     <h1>mcw - most common word</h1>
 </div>
+
 ---
+
 mcw is rust crate that stands for: "most common word"
 mcw does what it says -> returns most common words  
 
@@ -38,7 +40,7 @@ mcw = {version = "1.3.0", features = ["async"]}
  ```rust 
  #[tokio::main]
  async fn main() -> Result<(), Box<dyn std::error::Error>>{
-      let words : Vec<Word> = get_words("These are words. Lorem Ipsum. Async Version of
+      let words : Vec<Word> = async_get_words("These are words. Lorem Ipsum. Async Version of
       function", false).await?;
 
       for word in words{

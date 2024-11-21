@@ -30,20 +30,19 @@
 //! ```
 //! **/src/main.rs**
 //! ```rust,ignore
-//!  #[tokio::main]
+//! #[tokio::main]
 //! async fn main(){
-//!      let words : Vec<Word> = get_words("These are words. Lorem Ipsum. Async Version of
+//!      let words : Vec<Word> = async_get_words("These are words. Lorem Ipsum. Async Version of
 //!      function", false).await.expect("error");
 //!
 //!      for word in words{
 //!         println!("{}", word);
 //!      }
 //! }
-//! 
 //! ```
 //! ---
 
-#[derive(PartialEq, Eq, PartialOrd, Ord, Debug, Default)]
+#[derive(PartialEq, Eq, PartialOrd, Ord, Debug, Default, Clone)]
 pub struct Word{
     pub value : String,
     pub amount : u64
@@ -105,7 +104,7 @@ pub fn get_words(text: &str, is_file: bool) -> Result<Vec<Word>, Box<dyn std::er
 
 #[cfg(not(feature = "cli"))]
 #[cfg(feature = "async")]
-async fn get_words(text: &str, is_file: bool) -> Result<Vec<Word>, Box<dyn std::error::Error>>{    
+async fn async_get_words(text: &str, is_file: bool) -> Result<Vec<Word>, Box<dyn std::error::Error>>{    
     let input_text : Vec<String> = if is_file == false{
         text.to_string().split_whitespace().map(|s| s.to_string()).collect()
     }
@@ -146,14 +145,70 @@ async fn get_words(text: &str, is_file: bool) -> Result<Vec<Word>, Box<dyn std::
 }
 
 impl Word{
-    pub fn filter_words_from_range(min:u64, max:u64, words: Vec<Word>) -> Vec<Word>{
-        let mut word_array : Vec<Word> = vec![];
+    pub fn filter_with_range(range: Range, words: Vec<Word>) -> Vec<Word>{
+        let mut processed_words : Vec<Word> = vec![];
         for word in words{
-            if word.amount > min && word.amount < max{
-                word_array.push(word);
-            }
-            else{continue;}
+            if Range::in_range(range, word.amount){
+                processed_words.push(word);
+            } 
         }
-        word_array
+        processed_words
+    }
+}
+
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Debug, Default)]
+pub struct Range{
+    pub min: u64,
+    pub max: u64
+}
+
+impl Range{
+    pub fn in_range(range: Range, value: u64) -> bool{
+        return value >= range.min && value <= range.max;
+    }
+}
+
+/// Returns string from `Range`
+impl ToString for Range{
+    fn to_string(&self) -> String {
+        format!("{}.{}", self.min, self.max)
+    }
+}
+
+/// To create `Range` struct from String, use `Range::from(string)` 
+/// `Min` is separated from `Max` by comma (',') or dot ('.').
+/// Example: "0.10" -> parses to Range with `Min` equal 0 and `Max` equal 10
+/// Example: "10,20" -> parses to Range with `Min` equal 10 and `Max` equal 20
+impl From<String> for Range{
+    fn from(value: String) -> Self {
+        let mut number_1_string : Vec<char> = vec![];
+        let mut number_2_string : Vec<char> = vec![];
+        let mut is_num1 : bool = true; // true -> num1 false -> num2
+        for c in value.chars().collect::<Vec<char>>(){
+               if is_num1 && c != '.' && c != ','{
+                   number_1_string.push(c);
+               } 
+               else if !is_num1 && c != '.' && c != ','{
+                   number_2_string.push(c);
+               }
+               else{
+                   is_num1 = false;
+               }
+        }
+        let number_1 = match String::from_iter(number_1_string.iter()).trim().parse(){
+            Ok(v) => v,
+            Err(e) =>{
+                eprintln!("{}", e);
+                0
+            }
+        };
+        let number_2 = match String::from_iter(number_2_string.iter()).trim().parse(){
+            Ok(v) => v,
+            Err(e) => {
+                eprintln!("{}", e);
+                10
+            }
+        };
+        Range{min: number_1, max: number_2}
     }
 }

@@ -29,7 +29,7 @@ struct Range{
 
 impl Range{
     fn in_range(range: Range, value: u64) -> bool{
-        return value > range.min && value <= range.max;
+        return value >= range.min && value <= range.max;
     }
 }
 

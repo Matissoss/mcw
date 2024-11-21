@@ -40,11 +40,11 @@ Third/Fourth Argument: preset (read [PRESETS.md](PRESETS.md)) -- Example: `text_
 
 `./path_to_exec main.c 0.10 c_preset`
 
-`./path_to_exec 'file1.txt file2.txt' 10 test_preset`
+`./path_to_exec 'file1.txt file2.txt' 5.10 test_preset`
 
-`./path_to_exec pan-tadeusz.txt 100 polish_text_preset`
+`./path_to_exec pan-tadeusz.txt 10.100 polish_text_preset`
 
-`./path_to_exec main.c 10 c_preset`
+`./path_to_exec main.c 0.10 c_preset`
 
 -EOEF-
 
