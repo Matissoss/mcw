@@ -2,7 +2,7 @@
 name = "mcw"
 version = "1.4.1"
 edition = "2021"
-license = "MLI LICENSE - https://matissoss.github.io/mli-license"
+license-file = "LICENSE"
 author = ["MateusDev <matissossGameDev@proton.me>"]
 description = "mcw - most common word"
 readme = "README.crates.md"
