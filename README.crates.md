@@ -34,7 +34,7 @@ name = "your_package"
 version = "0.1.0"
 edition = "2021"
 [dependencies]
-mcw = {version = "1.3.0", features = ["async"]}
+mcw = {version = "1.4.1", features = ["async"]}
 ```
  **/src/main.rs**
  ```rust 

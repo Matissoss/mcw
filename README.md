@@ -11,11 +11,6 @@
 - Written in Rust
 - Partially customizable using presets
 
-
-**NOTE: mcw is still under developement** check out what features are under development: 
-[TODO.md](TODO.md)
-
-
 ## About
 
 mcw is CLI app that does what it says - takes files as input and outputs most common words. Written in Rust.

@@ -1,8 +1,8 @@
 [package]
 name = "mcw"
-version = "1.4.0"
+version = "1.4.1"
 edition = "2021"
-license = "MIT"
+license = "MLI LICENSE - https://matissoss.github.io/mli-license"
 author = ["MateusDev <matissossGameDev@proton.me>"]
 description = "mcw - most common word"
 readme = "README.crates.md"
