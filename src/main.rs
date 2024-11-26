@@ -128,10 +128,7 @@ async fn main() {
         and a word needs to be repeated atleast 1 time to 10 times
         ");
     } else if args.len() >= 2 {
-        let file_names : Arc<Vec<String>> = Arc::new(args[1].clone()
-            .split_whitespace()
-            .map(|f| f.to_string())
-            .collect());
+        let file_names : Arc<Vec<String>> = Arc::new(args[1].clone().split_whitespace().map(|f| f.to_string()).collect());
 
         let mut handles = vec![];
         for i in 0..file_names.len(){
@@ -187,49 +184,20 @@ async fn main() {
 }
 
 #[cfg(feature = "cli")]
-async fn process_text(file_path: &str, config : &Configuration) -> HashMap<String, u64> {
-    let file_contents = match fs::read_to_string(file_path){
-        Ok(v) => v.to_string(),
-        Err(_) => "".to_string()
-    };
-    let words_as_vec: Vec<String> = file_contents
-        .split_whitespace()
-        .map(|s| s.to_string())
-        .collect();
-
-    let mut word_array_without_special : Vec<String> = vec![];
-    for word in &words_as_vec {
-        let word_as_chars: Vec<char> = word.chars().collect();
-        let mut chars : Vec<char> = vec![];
-        for c in word_as_chars {
-            let mut can_add : bool = true;
-            for ignored_c in &config.ignored_chars{
-                if c == *ignored_c{
-                    can_add = false;
-                }
-            }
-            if can_add {
-                chars.push(c);
-            }
-        }
-        word_array_without_special.push(String::from_iter(&chars));
-    }
-
-    let words_formatted : Vec<String> = word_array_without_special
-        .iter()
-        .map(|s| s.to_lowercase())
-        .collect();
-    let mut words: HashMap<String, u64> = HashMap::new();
-    for word in words_formatted{
-        let word_in_hashmap = words.get(&word);
-        if let Some(v) = word_in_hashmap{
-            words.insert(word, v + 1);
+async fn process_text(string: &String, conf: &Configuration) -> HashMap<String, u64>{
+    let mut hashmap_toret : HashMap<String, u64>=HashMap::new();
+    let ignored_chars = &conf.ignored_chars;
+    let file_str = match tokio::fs::read_to_string(string).await{Ok(v)=>v,Err(e)=>{eprintln!("{}",e);"".to_string()}};
+    for s in file_str.split_whitespace().map(|s| {s.to_string();s.to_lowercase()}).collect::<Vec<String>>(){
+        let key = &String::from_iter(s.chars().filter(|c| !ignored_chars.contains(c)));
+        if hashmap_toret.contains_key(key){
+            hashmap_toret.insert(key.to_string(), hashmap_toret.get(key).unwrap() + 1);
         }
         else{
-            words.insert(word, 1);
+            hashmap_toret.insert(key.to_string(), 1);
         }
     }
-    words
+    hashmap_toret
 }
 
 #[cfg(feature = "cli")]
