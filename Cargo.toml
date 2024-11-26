@@ -22,6 +22,6 @@ tokio   =   { version = "1.41.1", features = ["full"], optional = true}
 toml    =   { version = "0.8.19", optional = true}
 
 [features]
-default = ["cli"]
+default = []
 async = ["tokio"]
 cli = ["colored", "serde", "tokio", "toml"]
