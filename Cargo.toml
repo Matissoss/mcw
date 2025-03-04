@@ -1,27 +1,21 @@
 [package]
-name = "mcw"
-version = "1.4.1"
+name = "tan"
+version = "2.0.0"
 edition = "2021"
-license-file = "LICENSE"
+license-file = "MIT"
 author = ["MateusDev <matissossGameDev@proton.me>"]
-description = "mcw - most common word"
+description = "tan - text analysis"
 readme = "README.crates.md"
 
 [lib]
-name = "mcw"
-path = "lib_src/lib.rs"
+name = "tan"
+path = "src/lib.rs"
 
 [[bin]]
-name = "mcw-cli"
+name = "tan"
 path = "src/main.rs"
 
 [dependencies]
-colored =   { version = "2.1.0", optional = true}
-serde   =   { version = "1.0.215", features = ["derive"], optional = true}
-tokio   =   { version = "1.41.1", features = ["full"], optional = true}
-toml    =   { version = "0.8.19", optional = true}
 
 [features]
 default = []
-async = ["tokio"]
-cli = ["colored", "serde", "tokio", "toml"]
