@@ -1,15 +1,17 @@
-#[deprecated(since="2.0.0", note="async_get_words() is deprecated! use get_words() instead!")]
+#[deprecated(since="2.0.0", note="!!!THIS CRATE SHOULD NOT BE USED AS IT WON'T BE LONGER MAINTAINED!!! async_get_words() is deprecated! use get_words() instead!")]
 pub async fn async_get_words (){
     println!("async_get_words() is deprecated! use get_words() instead");
     std::process::exit(-1);
 }
 
+#[deprecated(since="2.1.0", note="!!!THIS CRATE SHOULD NOT BE USED AS IT WON'T BE LONGER MAINTAINED!!!")]
 #[derive(Debug, PartialEq, Eq, Hash, PartialOrd, Ord, Clone, Default)]
 pub struct Word{
     pub value: String,
     pub amount: u64
 }
 
+#[deprecated(since="2.1.0", note="!!!THIS CRATE SHOULD NOT BE USED AS IT WON'T BE LONGER MAINTAINED!!!")]
 pub fn get_words(input: &str, ignored_chars: std::collections::HashSet<char>) -> Vec<Word>{
     let mut inside_closure = (false, ' ');
     let mut temp_buf = Vec::new();
@@ -74,19 +76,4 @@ pub fn get_words(input: &str, ignored_chars: std::collections::HashSet<char>) ->
     }
 
     return final_vector;
-}
-
-#[cfg(test)]
-mod tests{
-    use super::*;
-    #[test]
-    fn test(){
-        let words = get_words("Hello World 'Test Haha\"'", std::collections::HashSet::new());
-        assert_eq!(
-            vec![
-            Word{value:"Hello".to_string(),amount:1},
-            Word{value:"World".to_string(),amount:1},
-            Word{value:"Test Haha".to_string(),amount:1}], 
-            words)
-    }
 }

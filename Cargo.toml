@@ -1,11 +1,11 @@
 [package]
 name = "mcw"
-version = "2.0.0"
+version = "2.1.0"
 edition = "2021"
 license = "MIT"
 author = ["MateusDev <matissossGameDev@proton.me>"]
 description = "mcw/tan - text analysis"
-readme = "README.crates.md"
+readme = "README.md"
 
 [lib]
 name = "tan"
